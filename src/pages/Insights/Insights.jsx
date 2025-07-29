@@ -1,6 +1,6 @@
-// src/pages/Insights/Insights.jsx
 import React, { useRef, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import html2pdf from "html2pdf.js";
 import logo from "../../assets/Predictive_Maintenance.png";
 import {
@@ -37,20 +37,27 @@ const SectionCard = ({
 );
 
 const Insights = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
   const reportRef = useRef();
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (location.state) {
-      localStorage.setItem("insightData", JSON.stringify(location.state));
-      setData(location.state);
-    } else {
-      const stored = localStorage.getItem("insightData");
-      if (stored) setData(JSON.parse(stored));
-    }
-  }, [location.state]);
+    const fetchInsight = async () => {
+      try {
+        const res = await axios.get(
+          `http://127.0.0.1:8000/api/insights/${id}/`
+        );
+        setData(res.data);
+      } catch (err) {
+        console.error("Error fetching insight:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchInsight();
+  }, [id]);
 
   if (!data) {
     return (

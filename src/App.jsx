@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import ManualInput from "./pages/ManualInput/ManualInput";
 import Insights from "./pages/Insights/Insights";
+import InsightsList from "./pages/InsightsList/InsightsList";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import VerifyPhone from "./pages/VerifyPhone/VerifyPhone";
@@ -16,7 +17,7 @@ import About from "./pages/About/About";
 import Footer from "./components/Footer/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import SubmitReview from "./components/SubmitReview/SubmitReview";
 
 const App = () => {
@@ -44,16 +45,35 @@ const App = () => {
           path="/insights"
           element={
             <ProtectedRoute>
+              <InsightsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/insights/:id"
+          element={
+            <ProtectedRoute>
               <Insights />
             </ProtectedRoute>
           }
         />
-        <Route path="/settings" element={<ProtectedRoute>
-          <Settings />
-        </ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>} />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </Router>

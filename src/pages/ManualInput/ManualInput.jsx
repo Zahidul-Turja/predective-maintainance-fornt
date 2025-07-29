@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { auth, firebaseApp } from "../../firebase/firebase";
+import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ToggleSwitch } from "../../components/ui/ToggleSwitch";
