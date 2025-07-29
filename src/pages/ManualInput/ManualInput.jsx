@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { auth, firebaseApp } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ToggleSwitch } from "../../components/ui/ToggleSwitch";
@@ -12,6 +13,7 @@ import {
 } from "react-icons/fa";
 
 const ManualInput = () => {
+  const [user] = useState(auth.currentUser);
   const repairOptions = [
     "Screen Replacement",
     "Battery Replacement",
@@ -77,6 +79,7 @@ const ManualInput = () => {
     e.preventDefault();
 
     // console.log("Form Data:", JSON.stringify(formData));
+    formData.user_email = user.email;
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/submit/", {

@@ -16,7 +16,13 @@ import {
 import StatusBadge from "../../components/StatusBadge";
 import { motion } from "framer-motion";
 
-const SectionCard = ({ icon, title, children, color = "text-gray-800", delay = 0 }) => (
+const SectionCard = ({
+  icon,
+  title,
+  children,
+  color = "text-gray-800",
+  delay = 0,
+}) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     animate={{ opacity: 1, y: 0 }}
@@ -49,7 +55,9 @@ const Insights = () => {
   if (!data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen pt-28 text-center space-y-6">
-        <p className="text-2xl text-gray-600">No insights available. Please enter device data first.</p>
+        <p className="text-2xl text-gray-600">
+          No insights available. Please enter device data first.
+        </p>
         <button
           className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
           onClick={() => navigate("/manual-input")}
@@ -75,45 +83,70 @@ const Insights = () => {
 
   const suggestions = () => {
     const s = [];
-    if (data.batteryHealth < 80) s.push("Battery health is below 80%. Consider replacing it soon.");
-    if (data.chargesOvernight === "yes") s.push("Avoid overnight charging to improve battery lifespan.");
-    if (data.overheating) s.push("Device is overheating. Monitor background apps and heat.");
-    if (data.previousRepairs?.length >= 3) s.push("Frequent repairs suggest instability. Consider upgrading.");
-    if (data.storageUsage > 85 || data.ramUsage > 85) s.push("Heavy usage. Optimize apps or consider reset.");
-    if (["frequent"].includes(data.dropHistory) || data.waterDamage === "yes") s.push("Possible internal damage detected.");
-    if (data.sensorIssues || data.batteryBulging || data.buttonsNotWorking) s.push("Hardware irregularities present.");
-    return s.length ? s : ["Device is in good shape. Keep performing routine checkups."];
+    if (data.battery_health < 80)
+      s.push("Battery health is below 80%. Consider replacing it soon.");
+    if (data.charges_overnight === "yes")
+      s.push("Avoid overnight charging to improve battery lifespan.");
+    if (data.overheating)
+      s.push("Device is overheating. Monitor background apps and heat.");
+    if (data.previous_repairs?.length >= 3)
+      s.push("Frequent repairs suggest instability. Consider upgrading.");
+    if (data.storage_usage > 85 || data.ram_usage > 85)
+      s.push("Heavy usage. Optimize apps or consider reset.");
+    if (["frequent"].includes(data.drop_history) || data.water_damage === "yes")
+      s.push("Possible internal damage detected.");
+    if (data.sensorIssues || data.battery_bulging || data.buttons_not_working)
+      s.push("Hardware irregularities present.");
+    return s.length
+      ? s
+      : ["Device is in good shape. Keep performing routine checkups."];
   };
 
   const failureForecast = () => {
     const risk = [];
-    if (data.age >= 24 || data.batteryHealth < 70 || data.batteryBulging) {
+    if (data.age >= 24 || data.battery_health < 70 || data.battery_bulging) {
       risk.push("⚠️ 1–3 months: Battery or power system may fail.");
     }
-    if (data.previousRepairs?.length >= 3 || data.dropHistory === "frequent" || data.waterDamage === "yes") {
+    if (
+      data.previous_repairs?.length >= 3 ||
+      data.drop_history === "frequent" ||
+      data.water_damage === "yes"
+    ) {
       risk.push("⚠️ 3–6 months: Internal component risk (e.g. motherboard).");
     }
-    if (data.storageUsage > 90 || data.ramUsage > 90) {
-      risk.push("⚠️ 6–9 months: Performance drop likely due to high resource usage.");
+    if (data.storage_usage > 90 || data.ram_usage > 90) {
+      risk.push(
+        "⚠️ 6–9 months: Performance drop likely due to high resource usage."
+      );
     }
-    return risk.length ? risk : ["✅ No critical failures expected in the next 6–12 months."];
+    return risk.length
+      ? risk
+      : ["✅ No critical failures expected in the next 6–12 months."];
   };
 
   const getDeviceStatus = () => {
     const critical = [
-      data.batteryHealth < 50,
-      data.storageUsage > 90,
-      data.ramUsage > 90,
+      data.battery_health < 50,
+      data.storage_usage > 90,
+      data.ram_usage > 90,
       data.overheating,
-      data.dropHistory === "frequent",
-      data.waterDamage === "yes",
-      data.sensorIssues,
-      data.batteryBulging,
-      data.screenCracked,
-      data.buttonsNotWorking,
+      data.drop_history === "frequent",
+      data.water_damage === "yes",
+      data.sensor_issues,
+      data.battery_bulging,
+      data.screen_cracked,
+      data.buttons_not_working,
     ];
-    const attention = [data.batteryHealth < 70, data.storageUsage > 80, data.ramUsage > 80];
-    return critical.some(Boolean) ? "Critical" : attention.some(Boolean) ? "Needs Attention" : "Good";
+    const attention = [
+      data.battery_health < 70,
+      data.storage_usage > 80,
+      data.ram_usage > 80,
+    ];
+    return critical.some(Boolean)
+      ? "Critical"
+      : attention.some(Boolean)
+      ? "Needs Attention"
+      : "Good";
   };
 
   const status = getDeviceStatus();
@@ -149,95 +182,178 @@ const Insights = () => {
       <div ref={reportRef} className="space-y-10">
         <div className="flex justify-between items-center border-b pb-4">
           <img src={logo} alt="Logo" className="h-12" />
-          <p className="text-sm text-gray-400">Generated by Predictive Maintenance</p>
+          <p className="text-sm text-gray-400">
+            Generated by Predictive Maintenance
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <SectionCard icon={<Smartphone />} title="Device Information" delay={0}>
+          <SectionCard
+            icon={<Smartphone />}
+            title="Device Information"
+            delay={0}
+          >
             <div className="grid grid-cols-2 gap-y-2">
-              <p><strong>Brand:</strong> {data.brand}</p>
-              <p><strong>Model:</strong> {data.model}</p>
-              <p><strong>OS:</strong> {data.os}</p>
-              <p><strong>Age:</strong> {data.deviceAge} months</p>
-              <p><strong>RAM:</strong> {data.ramCapacity} GB</p>
-              <p><strong>Storage:</strong> {data.storageCapacity} GB</p>
-              <p><strong>Screen Time:</strong> {data.screenTime} hrs</p>
-              <p><strong>Charging:</strong> {data.chargeFrequency}</p>
-              <p><strong>Software:</strong> {data.updatedSoftware}</p>
+              <p>
+                <strong>Brand:</strong> {data.brand}
+              </p>
+              <p>
+                <strong>Model:</strong> {data.model}
+              </p>
+              <p>
+                <strong>OS:</strong> {data.os}
+              </p>
+              <p>
+                <strong>Age:</strong> {data.device_age} months
+              </p>
+              <p>
+                <strong>RAM:</strong> {data.ram_capacity} GB
+              </p>
+              <p>
+                <strong>Storage:</strong> {data.storage_capacity} GB
+              </p>
+              <p>
+                <strong>Screen Time:</strong> {data.screen_time} hrs
+              </p>
+              <p>
+                <strong>Charging:</strong> {data.charge_frequency}
+              </p>
+              <p>
+                <strong>Software:</strong> {data.updated_software}
+              </p>
             </div>
           </SectionCard>
 
-          <SectionCard icon={<BatteryCharging />} title="Battery Health" delay={0.1}>
-            <p><strong>Cycle Count:</strong> {data.batteryCycleCount}</p>
-            <p><strong>Health:</strong> {data.batteryHealth}%</p>
+          <SectionCard
+            icon={<BatteryCharging />}
+            title="Battery Health"
+            delay={0.1}
+          >
+            <p>
+              <strong>Cycle Count:</strong> {data.battery_cycle_count}
+            </p>
+            <p>
+              <strong>Health:</strong> {data.battery_health}%
+            </p>
             <div className="h-3 bg-gray-200 rounded-full overflow-hidden mt-1">
               <div
                 className={`h-full ${
-                  data.batteryHealth >= 80 ? "bg-green-500" : data.batteryHealth >= 50 ? "bg-yellow-500" : "bg-red-500"
+                  data.battery_health >= 80
+                    ? "bg-green-500"
+                    : data.battery_health >= 50
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
                 }`}
-                style={{ width: `${data.batteryHealth}%` }}
+                style={{ width: `${data.battery_health}%` }}
               />
             </div>
-            <p><strong>Fast Charging:</strong> {data.fastCharging}</p>
-            <p><strong>Overnight Charging:</strong> {data.chargesOvernight}</p>
+            <p>
+              <strong>Fast Charging:</strong>{" "}
+              {data.fast_charging ? "Yes" : "No"}
+            </p>
+            <p>
+              <strong>Overnight Charging:</strong> {data.charges_overnight}
+            </p>
           </SectionCard>
 
           <SectionCard icon={<Wrench />} title="Repair History" delay={0.2}>
-            {data.previousRepairs?.length > 0 ? (
+            {data.previous_repairs?.length > 0 ? (
               <ul className="list-disc pl-5 space-y-1">
-                {data.previousRepairs.map((r, i) => <li key={i}>{r}</li>)}
+                {data.previous_repairs.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
               </ul>
             ) : (
               <p>No major repairs reported.</p>
             )}
           </SectionCard>
 
-          <SectionCard icon={<Activity />} title="Performance & Hardware Condition" delay={0.3}>
+          <SectionCard
+            icon={<Activity />}
+            title="Performance & Hardware Condition"
+            delay={0.3}
+          >
             <div className="space-y-3">
               <div>
-                <p><strong>Storage Usage:</strong> {data.storageUsage}%</p>
+                <p>
+                  <strong>Storage Usage:</strong> {data.storage_usage}%
+                </p>
                 <div className="h-3 bg-gray-200 rounded-full mt-1">
                   <div
                     className={`h-full ${
-                      data.storageUsage <= 70 ? "bg-green-500" : data.storageUsage <= 90 ? "bg-yellow-500" : "bg-red-500"
+                      data.storage_usage <= 70
+                        ? "bg-green-500"
+                        : data.storage_usage <= 90
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                     }`}
-                    style={{ width: `${data.storageUsage}%` }}
+                    style={{ width: `${data.storage_usage}%` }}
                   />
                 </div>
               </div>
               <div>
-                <p><strong>RAM Usage:</strong> {data.ramUsage}%</p>
+                <p>
+                  <strong>RAM Usage:</strong> {data.ram_usage}%
+                </p>
                 <div className="h-3 bg-gray-200 rounded-full mt-1">
                   <div
                     className={`h-full ${
-                      data.ramUsage <= 70 ? "bg-green-500" : data.ramUsage <= 90 ? "bg-yellow-500" : "bg-red-500"
+                      data.ram_usage <= 70
+                        ? "bg-green-500"
+                        : data.ram_usage <= 90
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                     }`}
-                    style={{ width: `${data.ramUsage}%` }}
+                    style={{ width: `${data.ram_usage}%` }}
                   />
                 </div>
               </div>
-              <p><strong>Overheating:</strong> {data.overheating ? "Yes" : "No"}</p>
-              <p><strong>Drop History:</strong> {data.dropHistory}</p>
-              <p><strong>Water Damage:</strong> {data.waterDamage}</p>
-              <p><strong>Sensor Issues:</strong> {data.sensorIssues ? "Yes" : "No"}</p>
+              <p>
+                <strong>Overheating:</strong> {data.overheating ? "Yes" : "No"}
+              </p>
+              <p>
+                <strong>Drop History:</strong> {data.drop_history}
+              </p>
+              <p>
+                <strong>Water Damage:</strong> {data.water_damage}
+              </p>
+              <p>
+                <strong>Sensor Issues:</strong>{" "}
+                {data.sensor_issues ? "Yes" : "No"}
+              </p>
             </div>
           </SectionCard>
 
-          <SectionCard icon={<Lightbulb />} title="Maintenance Suggestions" color="text-green-700" delay={0.4}>
+          <SectionCard
+            icon={<Lightbulb />}
+            title="Maintenance Suggestions"
+            color="text-green-700"
+            delay={0.4}
+          >
             <ul className="list-disc pl-5 space-y-1">
-              {suggestions().map((tip, i) => <li key={i}>{tip}</li>)}
+              {suggestions().map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
             </ul>
           </SectionCard>
 
-          <SectionCard icon={<CalendarClock />} title="Predicted Failure Timeline" color="text-red-700" delay={0.5}>
+          <SectionCard
+            icon={<CalendarClock />}
+            title="Predicted Failure Timeline"
+            color="text-red-700"
+            delay={0.5}
+          >
             <ul className="list-disc pl-5 text-red-600 space-y-1">
-              {failureForecast().map((tip, i) => <li key={i}>{tip}</li>)}
+              {failureForecast().map((tip, i) => (
+                <li key={i}>{tip}</li>
+              ))}
             </ul>
           </SectionCard>
         </div>
 
         <footer className="pt-6 mt-10 border-t text-sm text-gray-400 text-center">
-          © {new Date().getFullYear()} Predictive Maintenance App. All rights reserved.
+          © {new Date().getFullYear()} Predictive Maintenance App. All rights
+          reserved.
         </footer>
       </div>
     </div>
